@@ -8,7 +8,7 @@ public class connection {
 
     private static Connection connection = null;
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws Exception{
         if (connection == null) {
             try {
                 Class.forName("org.firebirdsql.jdbc.FBDriver");
@@ -25,10 +25,10 @@ public class connection {
                 try {
                     connection = DriverManager.getConnection(url, user, password);
                 } catch (SQLException ex) {
-                    System.out.println("Não foi Possivel Conectar ao Banco de Dados: " + ex.getMessage());
+                    throw new Exception(ex);
                 }
             } catch (ClassNotFoundException ex) {
-                System.out.println(ex.getMessage());
+                throw new Exception(ex);
             }
         }
         return connection;
