@@ -1,6 +1,7 @@
 package model;
 
 public class Autor {
+    
     private int autor_id;
     private String nome;
 
