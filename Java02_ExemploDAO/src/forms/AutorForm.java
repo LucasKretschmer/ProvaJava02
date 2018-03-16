@@ -5,6 +5,12 @@
  */
 package forms;
 
+import dao.AutorDAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import model.Autor;
+
 /**
  *
  * @author lukre
@@ -16,6 +22,11 @@ public class AutorForm extends javax.swing.JFrame {
      */
     public AutorForm() {
         initComponents();
+        try {
+            autordao = new AutorDAO();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }
 
     /**
@@ -29,7 +40,7 @@ public class AutorForm extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         Add = new javax.swing.JButton();
-        NomeAutor = new javax.swing.JTextField();
+        txtAutor = new javax.swing.JTextField();
         Salvar = new javax.swing.JButton();
         Remover = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -40,6 +51,11 @@ public class AutorForm extends javax.swing.JFrame {
         jLabel1.setText("Nome do Autor");
 
         Add.setText("Adicionar");
+        Add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddActionPerformed(evt);
+            }
+        });
 
         Salvar.setText("Salvar");
 
@@ -72,7 +88,7 @@ public class AutorForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(NomeAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -85,7 +101,7 @@ public class AutorForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(NomeAutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Add)
@@ -98,6 +114,16 @@ public class AutorForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddActionPerformed
+        Autor autor = new Autor();
+        autor.setNome(txtAutor.getText());
+        try {
+            autordao.insert(autor);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }//GEN-LAST:event_AddActionPerformed
 
     /**
      * @param args the command line arguments
@@ -134,13 +160,14 @@ public class AutorForm extends javax.swing.JFrame {
         });
     }
 
+    private AutorDAO autordao;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Add;
-    private javax.swing.JTextField NomeAutor;
     private javax.swing.JButton Remover;
     private javax.swing.JButton Salvar;
     private javax.swing.JTable TabelaAutor;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField txtAutor;
     // End of variables declaration//GEN-END:variables
 }
