@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package forms;
 
 import dao.AutorDAO;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -28,7 +24,11 @@ public class AutorForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
-
+    
+    private void clear(){
+        txtAutor.setText("");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,7 +41,7 @@ public class AutorForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         Add = new javax.swing.JButton();
         txtAutor = new javax.swing.JTextField();
-        Salvar = new javax.swing.JButton();
+        alterar = new javax.swing.JButton();
         Remover = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         TabelaAutor = new javax.swing.JTable();
@@ -57,18 +57,33 @@ public class AutorForm extends javax.swing.JFrame {
             }
         });
 
-        Salvar.setText("Salvar");
+        alterar.setText("Alterar");
+        alterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                alterarActionPerformed(evt);
+            }
+        });
 
         Remover.setText("Remover");
+        Remover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RemoverActionPerformed(evt);
+            }
+        });
 
         TabelaAutor.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null}
             },
             new String [] {
-                "Title 1", "Title 2"
+                "Id_Autor", "Nome"
             }
         ));
+        TabelaAutor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TabelaAutorMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(TabelaAutor);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -82,7 +97,7 @@ public class AutorForm extends javax.swing.JFrame {
                         .addGap(10, 10, 10)
                         .addComponent(Add)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Salvar)
+                        .addComponent(alterar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Remover))
                     .addGroup(layout.createSequentialGroup()
@@ -105,10 +120,10 @@ public class AutorForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Add)
-                    .addComponent(Salvar)
+                    .addComponent(alterar)
                     .addComponent(Remover))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -123,8 +138,33 @@ public class AutorForm extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+        clear();
     }//GEN-LAST:event_AddActionPerformed
 
+    private void RemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoverActionPerformed
+        Autor autor = new Autor();
+        
+        
+        clear();
+    }//GEN-LAST:event_RemoverActionPerformed
+
+    private void alterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarActionPerformed
+        Autor autor = new Autor();
+        autor.setNome(txtAutor.getText());
+        try {
+            autordao.update(autor);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+        clear();
+    }//GEN-LAST:event_alterarActionPerformed
+
+    private void TabelaAutorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelaAutorMouseClicked
+        
+    }//GEN-LAST:event_TabelaAutorMouseClicked
+
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -161,13 +201,18 @@ public class AutorForm extends javax.swing.JFrame {
     }
 
     private AutorDAO autordao;
+    private String mode = "INS";
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Add;
     private javax.swing.JButton Remover;
-    private javax.swing.JButton Salvar;
     private javax.swing.JTable TabelaAutor;
+    private javax.swing.JButton alterar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtAutor;
     // End of variables declaration//GEN-END:variables
+
+    public javax.swing.JTextField getTxtAutor() {
+        return txtAutor;
+    }
 }
