@@ -2,9 +2,8 @@ package forms;
 
 import dao.AutorDAO;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import model.Autor;
 
 /**
@@ -24,11 +23,11 @@ public class AutorForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
+
+    private void clear() {txtAutor.setText("");}
     
-    private void clear(){
-        txtAutor.setText("");
-    }
-    
+    private void foco(){txtAutor.grabFocus();}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,6 +46,11 @@ public class AutorForm extends javax.swing.JFrame {
         TabelaAutor = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setText("Nome do Autor");
 
@@ -93,22 +97,22 @@ public class AutorForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtAutor))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(13, 13, 13))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(Add)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addComponent(alterar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Remover))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13))
+                        .addGap(18, 18, 18)
+                        .addComponent(Remover)
+                        .addGap(30, 30, 30))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,21 +139,32 @@ public class AutorForm extends javax.swing.JFrame {
         autor.setNome(txtAutor.getText());
         try {
             autordao.insert(autor);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
         clear();
+        listar();
+        foco();
     }//GEN-LAST:event_AddActionPerformed
 
     private void RemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoverActionPerformed
         Autor autor = new Autor();
-        
-        
+        int select = TabelaAutor.getSelectedRow();
+        autor.setAutor_id(Integer.parseInt((String) TabelaAutor.getValueAt(select, 0)));
+        try {
+            autordao.delete(autor);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
         clear();
+        listar();
+        foco();
     }//GEN-LAST:event_RemoverActionPerformed
 
     private void alterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarActionPerformed
         Autor autor = new Autor();
+        int select = TabelaAutor.getSelectedRow();
+        autor.setAutor_id(Integer.parseInt(TabelaAutor.getValueAt(select, 0).toString()));
         autor.setNome(txtAutor.getText());
         try {
             autordao.update(autor);
@@ -157,14 +172,34 @@ public class AutorForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
         clear();
+        listar();
+        foco();
     }//GEN-LAST:event_alterarActionPerformed
 
     private void TabelaAutorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelaAutorMouseClicked
-        
+        int selected = TabelaAutor.getSelectedRow();
+        txtAutor.setText((String) TabelaAutor.getValueAt(selected, 1));
+        foco();
     }//GEN-LAST:event_TabelaAutorMouseClicked
 
-    
-    
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        listar();
+    }//GEN-LAST:event_formWindowOpened
+    public void listar() {
+        DefaultTableModel model = (DefaultTableModel) TabelaAutor.getModel();
+        //Limpar jtabel
+        model.setNumRows(0);
+        try {
+            // Busca lista de objetos
+            for (Autor autor : autordao.findALL()) {
+                String linha[] = {"" + autor.getAutor_id(), autor.getNome()};
+                model.addRow(linha);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
