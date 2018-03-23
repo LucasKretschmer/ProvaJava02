@@ -236,7 +236,6 @@ public class AutorForm extends javax.swing.JFrame {
     }
 
     private AutorDAO autordao;
-    private String mode = "INS";
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Add;
     private javax.swing.JButton Remover;
@@ -246,8 +245,4 @@ public class AutorForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtAutor;
     // End of variables declaration//GEN-END:variables
-
-    public javax.swing.JTextField getTxtAutor() {
-        return txtAutor;
-    }
 }
