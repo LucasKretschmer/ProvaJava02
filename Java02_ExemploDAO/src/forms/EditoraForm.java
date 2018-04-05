@@ -210,7 +210,7 @@ public class EditoraForm extends javax.swing.JFrame {
     private void tabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaMouseClicked
         int selected = tabela.getSelectedRow();
         jnome.setText((String) tabela.getValueAt(selected, 1));
-        jmunicipio.setText((String) tabela.getValueAt(selected, 1));
+        jmunicipio.setText((String) tabela.getValueAt(selected, 2));
     }//GEN-LAST:event_tabelaMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
