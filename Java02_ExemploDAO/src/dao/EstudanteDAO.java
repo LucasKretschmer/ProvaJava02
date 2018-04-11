@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Editora;
 import model.Estudante;
+import model.Livro;
 
 public class EstudanteDAO {
 
@@ -36,6 +38,32 @@ public class EstudanteDAO {
         String sql = "DELETE FROM ESTUDANTE WHERE ESTUDANTE_ID = '"+est.getEstudante_id();
         PreparedStatement p = connection.prepareStatement(sql);
         p.execute();
+    }
+    
+    public Estudante findById(int id) throws Exception {
+        Estudante objeto = new Estudante();
+        String SQL = "SELECT STATUS, DATA_MATRICULA FROM ESTUDANTE "
+                + "WHERE ESTUDANTE_ID = ?";
+        try {
+            // Prepara a SQL
+            PreparedStatement p = connection.prepareStatement(SQL);
+            p.setInt(1, id);
+            // Executa a SQL e mantem os valores no ResultSet rs
+            ResultSet rs = p.executeQuery();
+            // Navega pelos registros no rs
+            while (rs.next()) {
+                // Instancia a classe e informa os valores do BD
+                objeto = new Estudante();
+                
+                objeto.setEstudante_id(id);
+            }
+            rs.close();
+            p.close();
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        }
+        // Retorna a lista
+        return objeto;
     }
     
     public List<Estudante> findALL() throws SQLException{

@@ -5,6 +5,18 @@
  */
 package forms;
 
+import dao.EstudanteDAO;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Estudante;
+import model.Estudante;
+import model.Livro;
+
 /**
  *
  * @author lukre
@@ -16,6 +28,11 @@ public class EstudanteForm extends javax.swing.JFrame {
      */
     public EstudanteForm() {
         initComponents();
+        try {
+            estudanteDAO = new EstudanteDAO();
+        } catch (Exception ex) {
+            Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -177,36 +194,88 @@ public class EstudanteForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
-        
-        
-        
-        
+        Estudante est = new Estudante();
+
+        String dataString = jdata.getText();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        java.sql.Date data2 = null;
+        try {
+            data2 = new java.sql.Date(format.parse(dataString).getTime());
+        } catch (ParseException ex) {
+            Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        est.setNome(jnome.getText());
+        est.setCurso(jcurso.getText());
+        est.setStatus(jstatus.getText().charAt(0));
+        est.setData_matricula(data2);
+
+        try {
+            estudanteDAO.insert(est);
+        } catch (SQLException ex) {
+            Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_addActionPerformed
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
-        
-        
-        
-        
+        Estudante est = new Estudante();
+
+        String dataString = jdata.getText();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        java.sql.Date data2 = null;
+        try {
+            data2 = new java.sql.Date(format.parse(dataString).getTime());
+        } catch (ParseException ex) {
+            Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        est.setNome(jnome.getText());
+        est.setCurso(jcurso.getText());
+        est.setStatus(jstatus.getText().charAt(0));
+        est.setData_matricula(data2);
+
+        try {
+            estudanteDAO.update(est);
+        } catch (SQLException ex) {
+            Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_editActionPerformed
 
     private void dellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dellActionPerformed
-        
-        
-        
-        
+
+
     }//GEN-LAST:event_dellActionPerformed
 
     private void tabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaMouseClicked
-        
-        
+        int selected = tabela.getSelectedRow();
+        jid.setText((String) tabela.getValueAt(selected, 1));
+        jnome.setText((String) tabela.getValueAt(selected, 2));
+        jcurso.setText((String) tabela.getValueAt(selected, 3));
         
         
     }//GEN-LAST:event_tabelaMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        
+        loadTabela();
     }//GEN-LAST:event_formWindowOpened
+
+    private void loadTabela() {
+        DefaultTableModel model = (DefaultTableModel) tabela.getModel();
+        model.setNumRows(0);
+
+        try {
+            for (Estudante est : estudanteDAO.findALL()) {
+                String linha[] = {
+                    "" + est.getEstudante_id(),
+                    est.getNome(),
+                    est.getCurso()
+                };
+                model.addRow(linha);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(LivroForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -243,6 +312,7 @@ public class EstudanteForm extends javax.swing.JFrame {
         });
     }
 
+    private EstudanteDAO estudanteDAO;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton add;
     private javax.swing.JButton dell;

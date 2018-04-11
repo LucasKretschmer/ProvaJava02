@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Autor;
 import model.Editora;
 import model.Livro;
 
@@ -33,6 +34,22 @@ public class LivroDAO {
         } catch (SQLException ex) {
             throw new Exception(ex);
         }
+    }
+
+    public void saveAutorLivro(Autor autor, Livro livro) {
+        String sql = "INSERT INTO AUTOR_LIVRO VALUES (?, ?)";
+        try {
+            PreparedStatement p = connection.prepareStatement(sql);
+            p.setInt(1, livro.getLivro_id());
+            p.setInt(2, autor.getAutor_id());
+            p.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(LivroDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void deleteAutorLivro(Autor autor, Livro livro) {
+        
     }
 
     public void update(Livro livro) throws Exception {
@@ -99,7 +116,7 @@ public class LivroDAO {
     public List<Livro> findAll() throws Exception {
         // Lista para manter os valores do ResultSet
         List<Livro> list = new ArrayList<>();
-        Livro objeto;
+        Livro objeto = null;
         String SQL = "SELECT L.*,E.NOME FROM LIVRO L "
                 + "INNER JOIN EDITORA E ON E.EDITORA_ID = L.EDITORA_ID";
         try {
@@ -119,6 +136,7 @@ public class LivroDAO {
                 Editora editora = new Editora();
                 editora.setEditora_id(rs.getInt("editora_id"));
                 editora.setNome(rs.getString("nome"));
+                
 
                 objeto.setEditora(editora);
 
@@ -130,8 +148,28 @@ public class LivroDAO {
         } catch (SQLException ex) {
             throw new Exception(ex);
         }
+                objeto.setAutores(findAutoresLivro(objeto.getLivro_id()));
         // Retorna a lista
         return list;
+    }
+    
+    private List<Autor> findAutoresLivro(int livroid) throws SQLException{
+        List<Autor> lista = new ArrayList<>();
+        String sql = "SELECT AL.AUTOR_ID, A.NOME AUTOR_LIVRO AS AL "
+                + "INNER JOIN  AUTOR A AS A ON A.AUTOR_ID = AL.AUTOR_ID"
+                + "WHERE LIVRO_ID = ?";
+        PreparedStatement p = connection.prepareStatement(sql);
+        p.setInt(1, livroid);
+        ResultSet rs = p.executeQuery();
+        
+        while (rs.next()) {
+            Autor a = new Autor();
+            a.setAutor_id(rs.getInt("AUTOR_ID"));
+            a.setNome(rs.getString("NOME"));
+            lista.add(a);
+        }
+        
+        return lista;
     }
 
     public static void main(String[] args) {
