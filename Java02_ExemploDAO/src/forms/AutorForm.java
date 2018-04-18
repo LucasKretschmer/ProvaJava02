@@ -20,7 +20,7 @@ public class AutorForm extends javax.swing.JFrame {
         try {
             autordao = new AutorDAO();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
 

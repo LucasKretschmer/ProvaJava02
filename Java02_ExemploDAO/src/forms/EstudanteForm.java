@@ -11,11 +11,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Estudante;
-import model.Estudante;
-import model.Livro;
 
 /**
  *
@@ -201,17 +198,13 @@ public class EstudanteForm extends javax.swing.JFrame {
         java.sql.Date data2 = null;
         try {
             data2 = new java.sql.Date(format.parse(dataString).getTime());
+            est.setNome(jnome.getText());
+            est.setCurso(jcurso.getText());
+            est.setStatus(jstatus.getText().charAt(0));
+            est.setData_matricula(data2);
+            estudanteDAO.insert(est);
         } catch (ParseException ex) {
             Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        est.setNome(jnome.getText());
-        est.setCurso(jcurso.getText());
-        est.setStatus(jstatus.getText().charAt(0));
-        est.setData_matricula(data2);
-
-        try {
-            estudanteDAO.insert(est);
         } catch (SQLException ex) {
             Logger.getLogger(EstudanteForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -251,8 +244,8 @@ public class EstudanteForm extends javax.swing.JFrame {
         jid.setText((String) tabela.getValueAt(selected, 1));
         jnome.setText((String) tabela.getValueAt(selected, 2));
         jcurso.setText((String) tabela.getValueAt(selected, 3));
-        
-        
+
+
     }//GEN-LAST:event_tabelaMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
