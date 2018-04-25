@@ -53,7 +53,7 @@ public class LivroDAO {
     }
 
     public void update(Livro livro) throws Exception {
-        String SQL = "UPDATE LIVRO SET EDITORA_ID=?,TITULO=?,ANO=?,DESCRICAO=? WHERE LIVRO_ID=?";
+        String SQL = "UPDATE LIVRO SET EDITORA_ID= ?,TITULO = ?,ANO = ?,DESCRICAO = ? WHERE LIVRO_ID = ?";
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
             p.setInt(1, livro.getEditora().getEditora_id());
@@ -68,7 +68,7 @@ public class LivroDAO {
     }
 
     public void delete(Livro livro) throws Exception {
-        String SQL = "DELETE FROM LIVRO WHERE LIVRO_ID=?";
+        String SQL = "DELETE FROM LIVRO WHERE LIVRO_ID = ?";
         try {
             PreparedStatement p = connection.prepareStatement(SQL);
             p.setInt(1, livro.getLivro_id());
@@ -79,38 +79,42 @@ public class LivroDAO {
     }
 
     public Livro findById(int id) throws Exception {
-        Livro objeto = new Livro();
-        String SQL = "SELECT L.*,E.NOME FROM LIVRO L "
+
+        Livro livro = new Livro();
+
+        String SQL = "SELECT L.*, E.NOME FROM LIVRO L "
                 + "INNER JOIN EDITORA E ON E.EDITORA_ID = L.EDITORA_ID "
-                + "WHERE LIVRO_ID = ?";
+                + "WHERE LIVRO_ID = ?;";
         try {
             // Prepara a SQL
             PreparedStatement p = connection.prepareStatement(SQL);
             p.setInt(1, id);
-            // Executa a SQL e mantem os valores no ResultSet rs
+            // Executa a SQL e armazena os valores no ResultSet rs
             ResultSet rs = p.executeQuery();
             // Navega pelos registros no rs
             while (rs.next()) {
                 // Instancia a classe e informa os valores do BD
-                objeto = new Livro();
-                objeto.setLivro_id(rs.getInt("livro_id"));
-                objeto.setTitulo(rs.getString("titulo"));
-                objeto.setAno(rs.getInt("ano"));
-                objeto.setDescricao(rs.getString("descricao"));
+                livro = new Livro();
+                livro.setLivro_id(rs.getInt("livro_id"));
+                livro.setTitulo(rs.getString("titulo"));
+                livro.setAno(rs.getInt("ano"));
+                livro.setDescricao(rs.getString("descricao"));
 
                 Editora editora = new Editora();
                 editora.setEditora_id(rs.getInt("editora_id"));
                 editora.setNome(rs.getString("nome"));
-
-                objeto.setEditora(editora);
+                
+                livro.setEditora(editora);
             }
+            // Fechas  as conexões
             rs.close();
             p.close();
         } catch (SQLException ex) {
             throw new Exception(ex);
         }
-        // Retorna a lista
-        return objeto;
+        
+        livro.setAutores(findAutoresLivro(livro.getLivro_id()));
+        return livro;
     }
 
     public List<Livro> findAll() throws Exception {
@@ -143,21 +147,23 @@ public class LivroDAO {
                 // Inclui na lista
                 list.add(objeto);
             }
-            rs.close();
+                     objeto.setAutores(findAutoresLivro(objeto.getLivro_id()));
+        // Retorna a lista
+        rs.close();
             p.close();
+        return list;
+            
         } catch (SQLException ex) {
             throw new Exception(ex);
         }
-                objeto.setAutores(findAutoresLivro(objeto.getLivro_id()));
-        // Retorna a lista
-        return list;
+       
     }
     
     private List<Autor> findAutoresLivro(int livroid) throws SQLException{
         List<Autor> lista = new ArrayList<>();
-        String sql = "SELECT AL.AUTOR_ID, A.NOME AUTOR_LIVRO AS AL "
-                + "INNER JOIN  AUTOR A AS A ON A.AUTOR_ID = AL.AUTOR_ID"
-                + "WHERE LIVRO_ID = ?";
+        String sql = "SELECT AL.AUTOR_ID, A.NOME FROM AUTOR_LIVRO AS AL "
+                + " INNER JOIN AUTOR AS A ON A.AUTOR_ID = AL.AUTOR_ID "
+                + " WHERE LIVRO_ID = ? ";
         PreparedStatement p = connection.prepareStatement(sql);
         p.setInt(1, livroid);
         ResultSet rs = p.executeQuery();
